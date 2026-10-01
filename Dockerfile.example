@@ -1,0 +1,13 @@
+FROM python:3.11-slim
+WORKDIR /app
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY src/ src/
+COPY data/ data/
+
+ENV DB_PATH="data/heat_exchanger.db" \
+    MODEL_PATH="artifacts/heat_efficiency_model.pkl"
+
+CMD ["python", "src/train.py"]
