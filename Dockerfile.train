@@ -1,0 +1,15 @@
+# Stage 1: instala as dependências
+FROM python:3.11-slim AS builder
+WORKDIR /app
+COPY requirements-train.txt .
+RUN pip install --no-cache-dir -r requirements-train.txt
+
+# Stage 2: imagem final
+FROM python:3.11-slim
+WORKDIR /app
+COPY --from=builder /usr/local/lib/python3.11/site-packages /usr/local/lib/python3.11/site-packages
+COPY src/ src/
+COPY data/ data/
+ENV DB_PATH="data/heat_exchanger.db" \
+    MODEL_PATH="artifacts/heat_efficiency_model.pkl"
+CMD ["python", "src/train.py"]

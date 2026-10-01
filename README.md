@@ -1,73 +1,57 @@
-# Desenvolver o projeto de ML para predicao de eficiencia de troca termica
+# Predição da eficiência de troca térmica
 
+Projeto de Machine Learning para treinar um modelo e prever a eficiência de um trocador de calor.
 
-1. Criar o ambiente virtual (.venv)
-```python
-python -m venv .venv
-```
+## Executar localmente
 
-2. Ativar o ambiente virtual
-- macos:
-```python
-source .venv/bin/activate
-```
+Ative o ambiente virtual e instale as dependências:
 
-- win:
-```python
-.venv\Scripts\activate.bat
-```
-
-3. Instalar as dependencias:
-```python
+```cmd
+.venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-4. Criar a imagem:
-```python
-docker build -t docker-ml-projeto .
+Exemplo de inferência:
+
+```cmd
+python src\inference.py --efficiency 10
 ```
 
-5. Executar o container:
-```python
-docker run docker-ml-projeto
+Para consultar as opções:
+
+```cmd
+python src\inference.py --help
 ```
 
----
-### Comandos de Docker
+## Docker
 
-Comandos básicos de Docker:
+O projeto possui imagens separadas para treino e inferência.
 
-- `docker ps` — verifica quais containers estão rodando na máquina.
-- `docker run hello-world` — executa uma imagem de teste do Docker Hub.
+### Construir as imagens
 
-Após isso, podemos executar novamente o `docker ps` e ver os detalhes das imagens. Nesse caso, não teremos resultados pois o container anterior foi executado e finalizado. Para verificar os que já foram finalizados:
+Execute na pasta do projeto:
 
-- `docker ps -a` — lista todos os containers já executados.
-
-Por hora, esses comandos ainda não são úteis, mas isso é parte do ciclo de introdução. Mais detalhes serão abordados em outros módulos.
-
-Podemos também rodar o Ubuntu dentro de um container:
-
-```bash
-docker run -it ubuntu bash
+```cmd
+docker build -f Dockerfile.train -t docker-ml-projeto-train .
+docker build -f Dockerfile.inference -t docker-ml-projeto-inference .
 ```
 
-O parâmetro `-it` permite interagir com o container e o `bash` abre o terminal dentro do Ubuntu. Com o container rodando, podemos verificá-lo com `docker ps`.
+### Treinar o modelo
 
-Para parar um container:
-
-```bash
-docker stop "CONTAINER ID"
+```cmd
+docker run --rm -v "%cd%\artifacts:/app/artifacts" docker-ml-projeto-train
 ```
 
-Para iniciar novamente um container parado:
+### Executar inferência
 
-```bash
-docker start "CONTAINER ID"
+```cmd
+docker run --rm docker-ml-projeto-inference --efficiency 10
 ```
 
-Para voltar a executar comandos dentro do container:
+Para estimar o dia a partir de uma eficiência-alvo:
 
-```bash
-docker exec -it "CONTAINER ID" bash
+```cmd
+docker run --rm docker-ml-projeto-inference --data 95
 ```
+
+> Os comandos Docker estão documentados, mas ainda não foram testados porque o Docker Engine não está iniciando neste computador.

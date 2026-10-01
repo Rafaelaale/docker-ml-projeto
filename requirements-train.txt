@@ -1,0 +1,5 @@
+pandas
+sqlalchemy
+matplotlib
+scikit-learn==1.8.0
+python-dotenv
