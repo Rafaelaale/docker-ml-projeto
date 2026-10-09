@@ -174,6 +174,17 @@ Secrets necessários no repositório:
 - `DOCKERHUB_USERNAME`
 - `DOCKERHUB_PASSWORD`
 
+### Pipeline de produção
+
+O workflow [.github/workflows/build_prod.yml](.github/workflows/build_prod.yml), disparado por `push` na branch `prod`, publica as duas imagens multi-arquitetura (`linux/amd64`, `linux/arm64`) no GitHub Container Registry (GHCR) com a tag `latest`:
+
+```bash
+docker pull ghcr.io/rafaelaale/docker-ml-projeto-train:latest
+docker pull ghcr.io/rafaelaale/docker-ml-projeto-inference:latest
+```
+
+A publicação usa o `GITHUB_TOKEN` automático com `packages: write` apenas no job `publish`; não depende dos secrets do Docker Hub. O ambiente `prod` é mantido. As imagens de produção passam a ser publicadas no GHCR, não no Docker Hub. Para permitir pulls sem autenticação, altere a visibilidade dos pacotes no GitHub para pública; pacotes privados exigem autenticação com permissão de leitura.
+
 ---
 
 ## Comandos úteis de Docker
