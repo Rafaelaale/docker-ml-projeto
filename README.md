@@ -174,6 +174,14 @@ Secrets necessários no repositório:
 - `DOCKERHUB_USERNAME`
 - `DOCKERHUB_PASSWORD`
 
+### Publicação de desenvolvimento
+
+O workflow [.github/workflows/build_dev.yml](.github/workflows/build_dev.yml), disparado por `push` na branch `dev`, publica no GitHub Container Registry (GHCR) usando o `GITHUB_TOKEN` automático, com permissão `packages: write` apenas no job `publish`. Não requer secrets do Docker Hub.
+
+As imagens são `ghcr.io/<proprietário-em-minúsculas>/docker-ml-projeto-train:dev-<run_number>.0.0` e `ghcr.io/<proprietário-em-minúsculas>/docker-ml-projeto-inference:dev-<run_number>.0.0`. Para baixar pacotes privados fora do Actions, autentique-se em `ghcr.io` com um token pessoal com permissão `read:packages`.
+
+Os workflows `build.yml` e `build_prod.yml` continuam usando Docker Hub e os secrets acima.
+
 ---
 
 ## Comandos úteis de Docker
