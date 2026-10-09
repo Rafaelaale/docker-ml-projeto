@@ -1,6 +1,4 @@
-﻿name: Build Docker Image
-
-on:
+﻿on:
   push:
     branches:
       - modulo07
@@ -87,12 +85,16 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+      - name: definir versao da imagem
+        id: versioning
+        run: echo "VERSION=${{ github.run_number }}.0.0" >> $GITHUB_OUTPUT
+
       - name: publish da imagem de treino
         uses: docker/build-push-action@v7
         with:
           context: .
           file: Dockerfile.train
-          tags: rafaxandi/docker-ml-projeto:latest
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/docker-ml-projeto:${{ steps.versioning.outputs.VERSION }}
           push: true
           cache-from: type=gha,scope=train
           cache-to: type=gha,scope=train,mode=max
