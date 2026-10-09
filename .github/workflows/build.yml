@@ -92,7 +92,7 @@ jobs:
         with:
           context: .
           file: Dockerfile.train
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/docker-ml-projeto:latest
+          tags: rafaxandi/docker-ml-projeto:latest
           push: true
           cache-from: type=gha,scope=train
           cache-to: type=gha,scope=train,mode=max
