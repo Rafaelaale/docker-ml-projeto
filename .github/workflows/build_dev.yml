@@ -49,6 +49,17 @@ jobs:
     environment: dev
 
     steps:
+      - name: validar credenciais do docker hub
+        shell: bash
+        env:
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
+        run: |
+          if [[ -z "$DOCKERHUB_USERNAME" || -z "$DOCKERHUB_PASSWORD" ]]; then
+            echo "::error::Configure DOCKERHUB_USERNAME and DOCKERHUB_PASSWORD in repository secrets or the dev environment secrets. Use a Docker Hub access token with write permission as DOCKERHUB_PASSWORD."
+            exit 1
+          fi
+
       - name: checkout de codigo
         uses: actions/checkout@v6
 
