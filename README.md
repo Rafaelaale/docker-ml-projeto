@@ -174,6 +174,10 @@ Secrets necessários no repositório:
 - `DOCKERHUB_USERNAME`
 - `DOCKERHUB_PASSWORD`
 
+Para o workflow de `modulo07`, configure ambos em **Settings → Secrets and variables → Actions → Secrets**
+do repositório. Os jobs `publish` e `smoke-test` não usam um ambiente;
+secrets configurados apenas em **Environments** não ficam disponíveis para eles.
+
 O workflow de DEV ([.github/workflows/build_dev.yml](.github/workflows/build_dev.yml))
 usa o ambiente `dev` e publica tags `dev-${{ github.run_number }}.0.0`.
 Configure os dois nomes acima em **Settings → Environments → dev → Environment secrets**
