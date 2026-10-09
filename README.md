@@ -11,9 +11,9 @@ Este repositório implementa um pipeline de Machine Learning ponta-a-ponta para 
 - **Treino**: lê dados históricos de operação (`data/heat_exchanger.db`) e ajusta um modelo de regressão que prediz a eficiência do trocador, salvando o artefato versionado em `artifacts/`.
 - **Inferência**: carrega o modelo treinado e responde a consultas sobre eficiência esperada para condições operacionais informadas via CLI.
 - **Empacotamento**: cada etapa roda em sua própria imagem Docker (build multi-stage) para garantir reprodutibilidade e isolar dependências.
-- **CI/CD**: o workflow do GitHub Actions ([.github/workflows/build.yml](.github/workflows/build.yml)) constrói, valida, publica multi-arquitetura no Docker Hub e executa smoke tests a cada push na branch `modulo07`.
+- **CI/CD**: o workflow do GitHub Actions ([.github/workflows/build.yml](.github/workflows/build.yml)) constrói, valida, publica multi-arquitetura no GitHub Container Registry (GHCR) e executa smoke tests a cada push na branch `modulo07`.
 
-Imagens publicadas:
+Imagens anteriores no Docker Hub (os exemplos abaixo usam essas imagens):
 
 - [`mitoura/docker-ml-projeto-train`](https://hub.docker.com/r/mitoura/docker-ml-projeto-train) — treina o modelo e gera o artefato `.pkl`.
 - [`mitoura/docker-ml-projeto-inference`](https://hub.docker.com/r/mitoura/docker-ml-projeto-inference) — executa inferência usando o artefato gerado.
@@ -166,13 +166,21 @@ O workflow [.github/workflows/build.yml](.github/workflows/build.yml) é dispara
 
 1. **build** — build local (`load: true`) das duas imagens com cache via GHA.
 2. **validacao** — rebuild e execução das imagens para validar o ciclo treino → inferência.
-3. **publish** — login no Docker Hub e push multi-arch (`linux/amd64`, `linux/arm64`) com a tag `${{ github.run_number }}.0.0`.
+3. **publish** — login no GHCR e push multi-arch (`linux/amd64`, `linux/arm64`) com a tag `${{ github.run_number }}.0.0`.
 4. **smoke-test** — `docker pull` da tag recém publicada e execução de treino + inferência para confirmar que a imagem está utilizável.
 
-Secrets necessários no repositório:
+O workflow usa o `GITHUB_TOKEN` fornecido automaticamente pelo GitHub Actions, com `packages: write` no job `publish` e `packages: read` no job `smoke-test`. Não precisa de credenciais do Docker Hub. O namespace é o proprietário do repositório em minúsculas.
 
-- `DOCKERHUB_USERNAME`
-- `DOCKERHUB_PASSWORD`
+Para consumir as novas imagens (substitua `<TAG>` pela versão publicada):
+
+```bash
+docker pull ghcr.io/rafaelaale/docker-ml-projeto-train:<TAG>
+docker pull ghcr.io/rafaelaale/docker-ml-projeto-inference:<TAG>
+```
+
+Nos comandos de execução acima, substitua `mitoura/` por `ghcr.io/rafaelaale/`. Se os pacotes forem privados, faça login no GHCR com uma credencial com permissão `read:packages` antes do pull.
+
+Os workflows separados de `dev` e `prod` continuam usando Docker Hub e os secrets `DOCKERHUB_USERNAME` e `DOCKERHUB_PASSWORD` nos respectivos ambientes.
 
 ---
 
