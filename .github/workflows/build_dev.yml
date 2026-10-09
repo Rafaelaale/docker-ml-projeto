@@ -49,6 +49,20 @@ jobs:
     environment: dev
 
     steps:
+      - name: validar credenciais do docker hub
+        env:
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
+        run: |
+          missing=0
+          for secret in DOCKERHUB_USERNAME DOCKERHUB_PASSWORD; do
+            if [[ -z "${!secret}" ]]; then
+              echo "::error::Configure o secret $secret em Settings > Environments > dev > Environment secrets ou em Settings > Secrets and variables > Actions."
+              missing=1
+            fi
+          done
+          exit "$missing"
+
       - name: checkout de codigo
         uses: actions/checkout@v6
 
