@@ -174,6 +174,16 @@ Secrets necessários no repositório:
 - `DOCKERHUB_USERNAME`
 - `DOCKERHUB_PASSWORD`
 
+### Publicação em DEV
+
+O workflow [.github/workflows/build_dev.yml](.github/workflows/build_dev.yml) roda na branch `dev` e usa o environment `dev`.
+Em **Settings → Environments → dev → Environment secrets**, ou em **Settings → Secrets and variables → Actions → Repository secrets**, configure:
+
+- `DOCKERHUB_USERNAME`: usuário do Docker Hub com acesso às imagens.
+- `DOCKERHUB_TOKEN`: token de acesso do Docker Hub com permissão de escrita. O workflow também aceita `DOCKERHUB_PASSWORD` como alternativa; se ambos existirem, o token tem prioridade.
+
+O erro `Password required` indica que a credencial chegou vazia à action de login. Confira o nome do secret, se ele tem valor e se está disponível ao environment `dev`; uma variável em **Variables** não substitui um secret. Depois de configurar a credencial, reexecute o workflow.
+
 ---
 
 ## Comandos úteis de Docker
