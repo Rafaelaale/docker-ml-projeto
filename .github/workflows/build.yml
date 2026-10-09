@@ -101,6 +101,20 @@ jobs:
       - name: checkout de codigo
         uses: actions/checkout@v6
 
+      - name: validar secrets do docker hub
+        env:
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
+        run: |
+          missing=0
+          for secret in DOCKERHUB_USERNAME DOCKERHUB_PASSWORD; do
+            if [[ -z "${!secret}" ]]; then
+              echo "::error::Configure o secret ${secret} nos secrets do repositorio (Settings > Secrets and variables > Actions > Secrets)."
+              missing=1
+            fi
+          done
+          exit "$missing"
+
       - uses: docker/setup-buildx-action@v4
 
       - name: login no docker hub
