@@ -14,3 +14,15 @@ jobs:
 
       - name: build da imagem de treino
         run: docker build -f Dockerfile.train -t docker-ml-projeto-train .
+
+      - name: validacao
+        run: docker run -v ${{ github.workspace }}/artifacts:/app/artifacts docker-ml-projeto-train
+
+      - name: validacao do artefato
+        run: ls artifacts/heat_efficiency_model_*.pkl || exit 1
+
+      - name: build da imagem de inferencia
+        run: docker build -f Dockerfile.inference -t docker-ml-projeto-inference .
+
+      - name: validacao de inferencia
+        run: docker run -v ${{ github.workspace }}/artifacts:/app/artifacts docker-ml-projeto-inference python src/inference.py --efficiency 300
