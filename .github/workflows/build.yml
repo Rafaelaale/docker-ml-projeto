@@ -1,0 +1,16 @@
+﻿name: Build Docker Image
+
+on:
+  push:
+    branches:
+      - modulo06
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout de código
+        uses: actions/checkout@v4
+
+      - name: build da imagem de treino
+        run: docker build -f Dockerfile.train -t docker-ml-projeto-train .
