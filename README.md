@@ -166,13 +166,22 @@ O workflow [.github/workflows/build.yml](.github/workflows/build.yml) é dispara
 
 1. **build** — build local (`load: true`) das duas imagens com cache via GHA.
 2. **validacao** — rebuild e execução das imagens para validar o ciclo treino → inferência.
-3. **publish** — login no Docker Hub e push multi-arch (`linux/amd64`, `linux/arm64`) com a tag `${{ github.run_number }}.0.0`.
+3. **publish** — login no registro e push multi-arch (`linux/amd64`, `linux/arm64`) com a tag `${{ github.run_number }}.0.0`.
 4. **smoke-test** — `docker pull` da tag recém publicada e execução de treino + inferência para confirmar que a imagem está utilizável.
 
-Secrets necessários no repositório:
+Para publicar no Docker Hub, configure os secrets no repositório ou no ambiente correspondente (`dev` em `build_dev.yml`, `prod` em `build_prod.yml`):
 
 - `DOCKERHUB_USERNAME`
-- `DOCKERHUB_PASSWORD`
+- `DOCKERHUB_TOKEN` (access token do Docker Hub com permissão de escrita) ou `DOCKERHUB_PASSWORD` (compatibilidade com a configuração existente). Se ambos existirem, `DOCKERHUB_TOKEN` tem prioridade.
+
+Se o usuário ou a credencial estiver ausente, a publicação usa o GitHub Container Registry (GHCR) com o `GITHUB_TOKEN` automático, sem tentar login/logout no Docker Hub. O workflow informa essa alternativa no log. Credenciais do Docker Hub presentes, mas inválidas, precisam ser corrigidas nos secrets; erros de autenticação ou publicação não são ignorados.
+
+Os nomes das imagens são normalizados para minúsculas:
+
+- Docker Hub: `<dockerhub_username>/docker-ml-projeto-{train,inference}:<TAG>`.
+- GHCR: `ghcr.io/rafaelaale/docker-ml-projeto-{train,inference}:<TAG>`.
+
+Os exemplos da seção 4 usam o namespace `mitoura`; substitua-o pelo seu usuário ou pelo caminho GHCR acima, conforme o registro selecionado. O smoke test usa o mesmo registro e as mesmas tags da publicação. As tags são `<run_number>.0.0` em `modulo07`, `dev-<run_number>.0.0` em `dev` e `latest` em `prod`. Os jobs de publicação possuem `packages: write` para GHCR, e o smoke test possui `packages: read`.
 
 ---
 
