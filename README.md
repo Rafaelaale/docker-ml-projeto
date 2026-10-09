@@ -174,6 +174,12 @@ Secrets necessários no repositório:
 - `DOCKERHUB_USERNAME`
 - `DOCKERHUB_PASSWORD`
 
+### Credenciais do pipeline DEV
+
+O workflow [.github/workflows/build_dev.yml](.github/workflows/build_dev.yml) usa o environment `dev`. Em **Settings → Secrets and variables → Actions**, configure `DOCKERHUB_USERNAME` com o usuário do Docker Hub e `DOCKERHUB_PASSWORD` com um **Personal Access Token do Docker Hub com permissão de escrita**. Alternativamente, configure os mesmos secrets em **Settings → Environments → dev**; secrets desse environment têm precedência sobre os do repositório.
+
+O erro `Password required` no passo de login indica que `DOCKERHUB_PASSWORD` está vazio ou indisponível para o job, não que o Docker Hub rejeitou a credencial. Verifique o nome exato do secret e substitua qualquer valor vazio ou incorreto no environment `dev`. Depois de salvar a credencial, execute novamente o job que falhou. O valor do token deve ficar apenas nos secrets do GitHub, nunca nos arquivos do repositório.
+
 ---
 
 ## Comandos úteis de Docker
